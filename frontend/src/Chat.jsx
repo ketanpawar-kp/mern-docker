@@ -11,7 +11,8 @@ function Chat() {
   const fetchMessages = () => {
     fetch(`http://localhost:9000/messages/${roomName}`)
       .then(res => res.json())
-      .then(setMessages);
+      .then(setMessages)
+      .catch(err => console.error('Failed to fetch messages:', err));
   };
 
   useEffect(() => {
@@ -35,11 +36,15 @@ function Chat() {
     <div style={containerStyle}>
       <h2 style={headingStyle}>💬 Chat Room: {roomName}</h2>
       <div style={chatBoxStyle}>
-        {messages.map(msg => (
-          <div key={msg._id} style={messageStyle(msg.user === user.email)}>
-            <strong>{msg.user}:</strong> {msg.text}
-          </div>
-        ))}
+        {messages.length === 0 ? (
+          <p style={{ color: 'gray', textAlign: 'center' }}>No messages yet...</p>
+        ) : (
+          messages.map(msg => (
+            <div key={msg._id} style={messageStyle(user && msg.user === user?.email)}>
+              <strong>{msg.user}:</strong> {msg.text}
+            </div>
+          ))
+        )}
       </div>
 
       {user && (
